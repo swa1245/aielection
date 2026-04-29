@@ -14,7 +14,7 @@ export const useTimeline = (country) => {
       setError(null);
       try {
         const res = await api.getTimeline(country);
-        setTimeline(res.timeline || []);
+        setTimeline(res.data || []);
       } catch (err) {
         setError(err.message || 'Failed to fetch timeline');
         // Fallback mock data for visual testing if API fails

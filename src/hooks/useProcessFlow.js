@@ -14,26 +14,38 @@ export const useProcessFlow = (country) => {
       setError(null);
       try {
         const res = await api.getSteps(country);
-        setSteps(res.steps || []);
+        setSteps(res.data || []);
       } catch (err) {
         setError(err.message || 'Failed to fetch process steps');
         // Fallback mock data
         setSteps([
           {
-            step: 1,
+            id: 's1',
             title: 'Voter Registration',
-            details: 'Ensure you are registered to vote before the deadline.',
-            documents: ['ID', 'Proof of Address'],
-            resources: ['Registration Portal'],
-            options: ['Online', 'In-person']
+            description: 'Ensure you are registered to vote before the deadline.',
+            details: [
+              'Visit the official election portal',
+              'Upload your proof of identity and address',
+              'Submit the application form online or in-person',
+              'Receive your voter ID card via mail'
+            ],
+            requiredDocs: ['National ID', 'Proof of Address'],
+            estimatedTime: '2-3 weeks',
+            icon: 'registration'
           },
           {
-            step: 2,
+            id: 's2',
             title: 'Research Candidates',
-            details: 'Review the platforms and backgrounds of running candidates.',
-            documents: [],
-            resources: ['Voter Guide'],
-            options: []
+            description: 'Review the platforms and backgrounds of running candidates.',
+            details: [
+              'Check official candidate lists',
+              'Read party manifestos and platforms',
+              'Attend local town hall meetings',
+              'Verify candidate credentials'
+            ],
+            requiredDocs: [],
+            estimatedTime: '1-2 days',
+            icon: 'check'
           }
         ]);
       } finally {

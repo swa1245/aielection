@@ -47,13 +47,13 @@ const App = () => {
 
   return (
     <div className={`app-shell tab-${activeTab}`}>
-      <Header 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab} 
+      <Header
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         onClearChat={getClearLabel() ? handleClearAction : null}
         clearLabel={getClearLabel()}
       />
-      
+
       <main className="app-main">
         <div className="content-container">
           <AnimatePresence mode="wait">
@@ -66,9 +66,9 @@ const App = () => {
                 transition={{ duration: 0.3 }}
                 className="full-height"
               >
-                <ChatInterface 
-                  messages={messages} 
-                  sendMessage={sendMessage} 
+                <ChatInterface
+                  messages={messages}
+                  sendMessage={sendMessage}
                   isLoading={chatLoading}
                   selectedCountry={selectedCountry}
                   onCountryChange={handleCountryChange}
@@ -84,9 +84,9 @@ const App = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <Timeline 
-                  timeline={timeline} 
-                  isLoading={timelineLoading} 
+                <Timeline
+                  timeline={timeline}
+                  isLoading={timelineLoading}
                 />
               </motion.div>
             )}
@@ -99,9 +99,9 @@ const App = () => {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <ProcessFlow 
-                  steps={steps} 
-                  isLoading={processLoading} 
+                <ProcessFlow
+                  steps={steps}
+                  isLoading={processLoading}
                 />
               </motion.div>
             )}

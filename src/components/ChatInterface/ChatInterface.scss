@@ -4,7 +4,7 @@
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 140px);
+  height: calc(100vh - 160px);
   gap: var(--spacing-xl);
   position: relative;
 }
@@ -161,6 +161,26 @@
     .message-card {
       @include card-premium;
       padding: var(--spacing-lg);
+
+      .markdown-content {
+        font-size: var(--font-size-md);
+        color: var(--color-gray-800);
+        line-height: 1.6;
+
+        p { margin: 0 0 var(--spacing-sm) 0; }
+        h3 { 
+          font-size: var(--font-size-lg);
+          font-weight: 700;
+          margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+          color: var(--color-primary);
+        }
+        ul, ol { 
+          margin: 0 0 var(--spacing-md) 0;
+          padding-left: var(--spacing-lg);
+        }
+        li { margin-bottom: var(--spacing-xs); }
+        strong { color: var(--color-gray-900); }
+      }
     }
   }
 

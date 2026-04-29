@@ -60,6 +60,7 @@
 
   &.right {
     flex-direction: row-reverse;
+
     .item-text {
       text-align: right;
       align-items: flex-end;
@@ -85,19 +86,28 @@
       &.completed {
         color: var(--color-green);
         background: var(--color-green-light);
-        .dot { background: var(--color-green); }
+
+        .dot {
+          background: var(--color-green);
+        }
       }
 
       &.active-now {
         color: var(--color-accent);
         background: var(--color-accent-light);
-        .dot { background: var(--color-accent); }
+
+        .dot {
+          background: var(--color-accent);
+        }
       }
 
       &.upcoming-event {
         color: var(--color-yellow);
         background: var(--color-yellow-light);
-        .dot { background: var(--color-yellow); }
+
+        .dot {
+          background: var(--color-yellow);
+        }
       }
 
       .dot {

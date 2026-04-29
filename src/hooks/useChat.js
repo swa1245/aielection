@@ -34,7 +34,7 @@ export const useChat = (country) => {
       const newAiMsg = {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
-        text: res.response || 'Sorry, I did not understand that.',
+        text: res.data?.content || 'Sorry, I did not understand that.',
         timestamp: new Date()
       };
       

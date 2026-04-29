@@ -1,108 +1,230 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ShieldCheck, MessageSquare, HelpCircle, Quote } from 'lucide-react';
-import ProcessStep from './ProcessStep';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  UserPlus, 
+  MapPin, 
+  Vote, 
+  CheckCircle2, 
+  ShieldCheck,
+  ClipboardCheck,
+  ChevronDown,
+  Clock,
+  FileText,
+  ListChecks,
+  Lightbulb,
+  AlertTriangle,
+  Gavel,
+  Printer
+} from 'lucide-react';
 import './ProcessFlow.scss';
 
-const ProcessFlow = ({ steps, isLoading }) => {
-  if (isLoading) {
-    return <LoadingSpinner text="Loading Process Flow..." />;
+const StepIcon = ({ iconName }) => {
+  const props = { size: 28 };
+  switch (iconName?.toLowerCase()) {
+    case 'registration': return <UserPlus {...props} />;
+    case 'location': return <MapPin {...props} />;
+    case 'vote': return <Vote {...props} />;
+    case 'check': return <CheckCircle2 {...props} />;
+    case 'ballot': return <ClipboardCheck {...props} />;
+    default: return <Vote {...props} />;
   }
+};
 
-  // Enhanced steps based on the design images
-  const enhancedSteps = [
-    {
-      id: 1,
-      title: 'Check Eligibility',
-      subtitle: 'Verify your legal standing before proceeding to registration.',
-      tag: 'Essential',
-      sections: [
-        {
-          title: 'REQUIRED DOCUMENTS',
-          items: ['Proof of U.S. Citizenship', 'Valid Government-issued Photo ID', 'Recent Utility Bill (Proof of Residence)']
-        },
-        {
-          title: 'LEGAL CRITERIA',
-          items: [
-            { label: 'Age Requirement', value: 'Must be 18+ years old by Election Day.' },
-            { label: 'Residency', value: 'Meet your specific state\'s residency duration.' }
-          ]
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: 'Register to Vote',
-      subtitle: 'Submit your information to your state or local election office.',
-      tag: 'Active Now',
-      actions: [
-        { label: 'Register Online', type: 'primary', icon: 'globe' },
-        { label: 'Mail-in Form', type: 'secondary', icon: 'mail' }
-      ],
-      footer: 'Deadlines vary by state. Most registration windows close 15-30 days before election day.'
-    },
-    {
-      id: 3,
-      title: 'Cast Your Ballot',
-      subtitle: 'Finalize your choices and submit your vote through your preferred method.',
-      votingMethods: [
-        { label: 'Early Voting', icon: 'calendar', color: 'orange' },
-        { label: 'Absentee/Mail', icon: 'mail', color: 'purple' },
-        { label: 'Poll Station', icon: 'map-pin', color: 'blue' }
-      ]
-    }
-  ];
+const ProcessFlow = ({ steps }) => {
+  const [expandedStep, setExpandedStep] = useState(steps && steps.length > 0 ? steps[0].id || 0 : null);
+
+  if (!steps || steps.length === 0) return null;
+
+  const toggleStep = (id) => {
+    setExpandedStep(expandedStep === id ? null : id);
+  };
+
+  const handleDownload = () => {
+    window.print();
+  };
 
   return (
     <div className="process-page">
-      <div className="process-header">
+      <header className="process-header">
         <div className="official-pill">
           <ShieldCheck size={14} />
-          Official 2024 Election Guide
+          Official Electoral Master Guide
         </div>
-        <h1 className="process-title">Your Path to the Polls</h1>
+        <h1 className="process-title">Comprehensive Voting Protocol</h1>
         <p className="process-subtitle">
-          A streamlined, step-by-step journey to ensuring your voice is heard in the<br/>
-          upcoming federal elections.
+          An institutional-grade guide generated in real-time. Detailed procedures, legal compliance, and expert tips for a seamless democratic experience.
         </p>
-      </div>
+      </header>
 
-      <div className="process-timeline-container">
+      <div className="process-steps-container">
         <div className="vertical-line"></div>
-        <div className="process-steps-list">
-          {enhancedSteps.map((step, index) => (
-            <ProcessStep key={step.id} step={step} index={index} />
-          ))}
-        </div>
+        {steps.map((step, index) => {
+          const isExpanded = expandedStep === (step.id || index);
+          
+          return (
+            <motion.div 
+              key={step.id || index}
+              className={`detailed-step-card ${isExpanded ? 'expanded' : ''}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => toggleStep(step.id || index)}
+            >
+              <div className="step-number-indicator">
+                <span>{index + 1}</span>
+              </div>
+              
+              <div className="card-header">
+                <div className="header-content">
+                  <div className="icon-box">
+                    <StepIcon iconName={step.icon} />
+                  </div>
+                  <div className="title-group">
+                    <h3>{step.title}</h3>
+                    <p className="short-desc">{step.description}</p>
+                  </div>
+                </div>
+                <div className="expand-trigger">
+                  <ChevronDown size={24} className={`chevron ${isExpanded ? 'rotated' : ''}`} />
+                </div>
+              </div>
+
+              {/* Normal Interactive Content */}
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div 
+                    className="card-expanded-content"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="content-grid">
+                      <div className="details-section">
+                        <div className="info-block">
+                          <h4 className="section-title">
+                            <ListChecks size={16} /> Standard Procedure
+                          </h4>
+                          <ul className="details-list">
+                            {Array.isArray(step.details) && step.details.length > 0 ? step.details.map((detail, dIdx) => (
+                              <li key={dIdx}>
+                                <div className="bullet-dot"></div>
+                                {detail}
+                              </li>
+                            )) : <li>{step.details || 'Information pending...'}</li>}
+                          </ul>
+                        </div>
+
+                        {step.proTips && step.proTips.length > 0 && (
+                          <div className="info-block tips-block">
+                            <h4 className="section-title tip-title">
+                              <Lightbulb size={16} /> Expert Recommendations
+                            </h4>
+                            <ul className="details-list">
+                              {step.proTips.map((tip, tIdx) => (
+                                <li key={tIdx} className="tip-item">{tip}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {step.pitfalls && step.pitfalls.length > 0 && (
+                          <div className="info-block pitfalls-block">
+                            <h4 className="section-title pit-title">
+                              <AlertTriangle size={16} /> Common Pitfalls
+                            </h4>
+                            <ul className="details-list">
+                              {step.pitfalls.map((pit, pIdx) => (
+                                <li key={pIdx} className="pit-item">{pit}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="meta-section">
+                        {step.requiredDocs && step.requiredDocs.length > 0 && (
+                          <div className="meta-block">
+                            <h4 className="section-title doc-title">
+                              <FileText size={16} /> Required Documents
+                            </h4>
+                            <div className="doc-tags">
+                              {step.requiredDocs.map((doc, docIdx) => (
+                                <span key={docIdx} className="doc-tag">{doc}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {step.estimatedTime && (
+                          <div className="meta-block time-block">
+                            <h4 className="section-title time-title">
+                              <Clock size={16} /> Estimated Time
+                            </h4>
+                            <p className="time-text">{step.estimatedTime}</p>
+                          </div>
+                        )}
+
+                        {step.legalNotice && (
+                          <div className="meta-block legal-block">
+                            <h4 className="section-title legal-title">
+                              <Gavel size={16} /> Legal Compliance
+                            </h4>
+                            <p className="legal-text">{step.legalNotice}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Print-Only Expanded Content (Static) */}
+              <div className="print-only-content">
+                <div className="content-grid">
+                  <div className="details-section">
+                    <h4 className="section-title">Standard Procedure</h4>
+                    <ul className="details-list">
+                      {Array.isArray(step.details) ? step.details.map((d, i) => <li key={i}>{d}</li>) : <li>{step.details}</li>}
+                    </ul>
+                    {step.proTips && (
+                      <>
+                        <h4 className="section-title">Expert Tips</h4>
+                        <ul className="details-list">
+                          {step.proTips.map((t, i) => <li key={i}>{t}</li>)}
+                        </ul>
+                      </>
+                    )}
+                  </div>
+                  <div className="meta-section">
+                    {step.requiredDocs?.length > 0 && (
+                      <div className="meta-block">
+                        <h4 className="section-title">Required Documents</h4>
+                        <p>{step.requiredDocs.join(', ')}</p>
+                      </div>
+                    )}
+                    {step.legalNotice && (
+                      <div className="meta-block">
+                        <h4 className="section-title">Legal Compliance</h4>
+                        <p>{step.legalNotice}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      <div className="process-footer-card">
-        <div className="footer-left">
-          <span className="support-tag">24/7 SUPPORT AVAILABLE</span>
-          <h2>Still have questions about the process?</h2>
-          <p>
-            Our intelligent assistant can clarify state-specific laws, 
-            help you find your polling station, or check registration 
-            deadlines for your zip code.
-          </p>
-          <div className="footer-btns">
-            <button className="chat-btn">
-              <MessageSquare size={18} />
-              Start Interactive Chat
-            </button>
-            <button className="faq-btn">
-              <HelpCircle size={18} />
-              Browse FAQs
-            </button>
-          </div>
-        </div>
-        <div className="footer-right">
-          <img src="/assets/images/capitol_dark.png" alt="Capitol" />
-          <div className="quote-overlay">
-            <Quote size={32} className="quote-icon" />
-            <p>"Democracy is not just the right to vote, it is the right to live in dignity."</p>
-          </div>
+      <div className="process-footer">
+        <div className="footer-content">
+          <h3>Generate Your Official PDF Report</h3>
+          <p>This will compile all expert tips, legal notices, and procedural steps into a single institutional guide.</p>
+          <button className="footer-btn" onClick={handleDownload}>
+            <Printer size={18} />
+            Generate Master Guide (PDF)
+          </button>
         </div>
       </div>
     </div>

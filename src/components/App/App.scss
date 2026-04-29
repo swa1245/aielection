@@ -8,12 +8,10 @@
   background-color: var(--bg-main);
   transition: background 0.5s ease;
 
-  &.tab-0 {
-    background: var(--bg-chat-gradient);
-  }
-
-  &.tab-1, &.tab-2 {
-    @include dot-grid;
+  &.tab-0,
+  &.tab-1,
+  &.tab-2 {
+    background: var(--color-white);
   }
 }
 
@@ -21,6 +19,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
+  min-height: calc(100vh - 84px);
+  z-index: 1;
 }
 
 .content-container {

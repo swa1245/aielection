@@ -40,19 +40,33 @@ const Timeline = ({ timeline, isLoading }) => {
       <div className="timeline-header">
         <div className="cycle-pill">
           <Clock size={14} />
-          2024 Electoral Cycle
+          Current Electoral Cycle
         </div>
         <h1 className="timeline-title">Your Election Timeline</h1>
         <p className="timeline-subtitle">
-          A comprehensive, real-time guide to the critical milestones of the United States<br/>
-          electoral process. Track deadlines, voting days, and transitions.
+          A comprehensive, real-time guide to the critical milestones of the electoral process.<br />
+          Track deadlines, voting days, and transitions.
         </p>
       </div>
 
       <div className="timeline-list">
-        {enhancedTimeline.map((item, index) => (
-          <TimelineItem key={index} item={item} index={index} />
-        ))}
+        {timeline && timeline.length > 0 ? (
+          timeline.map((item, index) => (
+            <TimelineItem
+              key={index}
+              item={{
+                date: item.date,
+                event: item.title,
+                description: item.description,
+                status: item.status?.toUpperCase(),
+                image: '/assets/images/registration.png' // Default placeholder
+              }}
+              index={index}
+            />
+          ))
+        ) : (
+          <div className="no-data">No timeline data available for this country.</div>
+        )}
       </div>
 
       <div className="timeline-footer-cards">
@@ -89,7 +103,7 @@ const Timeline = ({ timeline, isLoading }) => {
       </div>
 
       <footer className="footer-credits">
-        © 2024 Federal Election Commission - Institutional Access Hub
+        © 2026 Federal Election Commission - Institutional Access Hub
       </footer>
     </div>
   );

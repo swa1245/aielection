@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Send, Plus, Bot, User, ThumbsUp, Copy, ChevronDown, Check } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 import './ChatInterface.scss';
 
 const ChatInterface = ({ messages, sendMessage, isLoading, selectedCountry, onCountryChange }) => {
@@ -111,42 +112,41 @@ const MessageBubble = ({ message }) => {
   const isAi = message.sender === 'ai';
 
   // Basic parser for structured content
+
   const renderContent = (text) => {
     if (!isAi) return <p className="text-content">{text}</p>;
 
-    // Detect if it's a "Requirements" list
-    if (text.includes('requirements:')) {
-      const parts = text.split('\n');
-      const intro = parts[0];
-      const items = parts.slice(1).filter(p => p.trim().startsWith('-') || p.trim().match(/^\d+\./));
-      const actionIndex = parts.findIndex(p => p.toLowerCase().includes('next recommended action'));
-      const footerText = actionIndex !== -1 ? parts.slice(actionIndex).join('\n') : null;
+    const actionMarker = "NEXT RECOMMENDED ACTION:";
+    const hasAction = text.includes(actionMarker);
+    
+    let mainContent = text;
+    let actionContent = "";
 
-      return (
-        <div className="structured-content">
-          <p className="intro">{intro}</p>
-          <div className="requirement-list">
-            {items.map((item, i) => (
-              <div key={i} className="requirement-item">
-                <div className="bullet"></div>
-                <span>{item.replace(/^-\s*|^\d+\.\s*/, '')}</span>
-              </div>
-            ))}
-          </div>
-          {footerText && (
-            <div className="action-callout">
-              <div className="callout-header">
-                <span className="bolt-icon">⚡</span>
-                NEXT RECOMMENDED ACTION
-              </div>
-              <p>{footerText.replace(/next recommended action:?/i, '').trim()}</p>
-            </div>
-          )}
-        </div>
-      );
+    if (hasAction) {
+      const parts = text.split(actionMarker);
+      mainContent = parts[0].trim();
+      actionContent = parts[1].trim();
     }
 
-    return <p className="text-content">{text}</p>;
+    return (
+      <div className="structured-content">
+        <div className="markdown-content">
+          <ReactMarkdown>{mainContent}</ReactMarkdown>
+        </div>
+        
+        {hasAction && (
+          <div className="action-callout" style={{ marginTop: '20px' }}>
+            <div className="callout-header">
+              <span className="bolt-icon">⚡</span>
+              NEXT RECOMMENDED ACTION
+            </div>
+            <div className="markdown-content">
+              <ReactMarkdown>{actionContent}</ReactMarkdown>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
