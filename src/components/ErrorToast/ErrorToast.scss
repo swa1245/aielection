@@ -1,0 +1,40 @@
+@use '../../styles/variables.scss' as *;
+@use '../../styles/mixins.scss' as *;
+@use '../../styles/variables.scss' as *;
+@use '../../styles/mixins.scss' as *;
+.error-toast {
+  position: fixed;
+  bottom: var(--spacing-6);
+  right: var(--spacing-6);
+  background: var(--color-secondary);
+  color: var(--color-white);
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  z-index: 1000;
+
+  .icon {
+    font-size: var(--font-size-lg);
+  }
+
+  .text {
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+  }
+
+  .close-btn {
+    color: var(--color-white);
+    font-size: var(--font-size-xl);
+    line-height: 1;
+    margin-left: var(--spacing-2);
+    opacity: 0.8;
+    transition: opacity var(--transition-fast);
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
