@@ -1,110 +1,180 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, IdCard, FileText, Clock, Headset, Phone, CheckCircle2 } from 'lucide-react';
-import TimelineItem from './TimelineItem';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import { 
+  Calendar, 
+  CheckCircle2, 
+  Clock, 
+  ChevronRight, 
+  Globe2,
+  TrendingUp,
+  Users,
+  Activity,
+  Lightbulb,
+  ArrowUpRight
+} from 'lucide-react';
 import './Timeline.scss';
 
-const Timeline = ({ timeline, isLoading }) => {
-  if (isLoading) {
-    return <LoadingSpinner text="Loading Timeline..." />;
-  }
+const Timeline = ({ events, stats, selectedCountry, onCountryChange, countries }) => {
+  const [showDropdown, setShowDropdown] = React.useState(false);
 
-  // Enhanced timeline with images and status based on the design
-  const enhancedTimeline = [
-    {
-      date: 'Oct 24, 2024',
-      event: 'Voter Registration',
-      description: 'The final window for eligibility confirmation has closed across all primary states for the upcoming cycle.',
-      status: 'COMPLETED',
-      image: '/assets/images/registration.png'
-    },
-    {
-      date: 'Nov 05, 2024',
-      event: 'General Election Day',
-      description: 'The nation casts its vote. Polling stations are active nationwide from 7 AM to 8 PM local time. Your voice matters today.',
-      status: 'ACTIVE NOW',
-      image: '/assets/images/handshake.png'
-    },
-    {
-      date: 'Jan 20, 2025',
-      event: 'Inauguration Ceremony',
-      description: 'The formal transfer of power occurs on the West Front of the U.S. Capitol, marking the start of a new presidential term.',
-      status: 'UPCOMING EVENT',
-      image: '/assets/images/capitol.png'
-    }
-  ];
+  if (!events) return null;
 
   return (
     <div className="timeline-page">
-      <div className="timeline-header">
+      {/* 1. Electoral Context Card (Shared Component Style) */}
+      <div className="context-card">
+        <div className="context-info">
+          <div className="globe-icon">
+            <Globe2 size={24} />
+          </div>
+          <div className="context-text">
+            <h3>Electoral Context</h3>
+            <p>Currently viewing data for {selectedCountry}</p>
+          </div>
+        </div>
+
+        <div className="country-dropdown">
+          <button 
+            className="dropdown-trigger"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            {selectedCountry}
+            <ChevronRight size={16} className={`chevron ${showDropdown ? 'rotated' : ''}`} />
+          </button>
+          
+          {showDropdown && (
+            <div className="dropdown-menu">
+              {countries.map(country => (
+                <button
+                  key={country}
+                  className={`menu-item ${selectedCountry === country ? 'active' : ''}`}
+                  onClick={() => {
+                    onCountryChange(country);
+                    setShowDropdown(false);
+                  }}
+                >
+                  {country}
+                  {selectedCountry === country && <CheckCircle2 size={14} />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Intelligence Dashboard Section (New) */}
+      {stats && (
+        <div className="intelligence-dashboard">
+          <div className="dashboard-grid">
+            <motion.div 
+              className="stat-card"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="stat-icon time">
+                <Clock size={20} />
+              </div>
+              <div className="stat-value">{stats.daysUntilPolling}</div>
+              <div className="stat-label">Until Polling</div>
+            </motion.div>
+
+            <motion.div 
+              className="stat-card"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              <div className="stat-icon growth">
+                <TrendingUp size={20} />
+              </div>
+              <div className="stat-value">{stats.projectedTurnout}</div>
+              <div className="stat-label">Projected Turnout</div>
+            </motion.div>
+
+            <motion.div 
+              className="stat-card"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              <div className="stat-icon voters">
+                <Users size={20} />
+              </div>
+              <div className="stat-value">{stats.activeVoters}</div>
+              <div className="stat-label">Active Voters</div>
+            </motion.div>
+
+            <motion.div 
+              className="stat-card"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
+              <div className="stat-icon health">
+                <Activity size={20} />
+              </div>
+              <div className="stat-value">{stats.healthScore}/100</div>
+              <div className="stat-label">Democratic Health</div>
+            </motion.div>
+          </div>
+
+          <motion.div 
+            className="insight-bar"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className="insight-content">
+              <Lightbulb size={18} className="insight-icon" />
+              <p><strong>AI Insight:</strong> {stats.cycleInsight}</p>
+            </div>
+            <ArrowUpRight size={18} className="arrow" />
+          </motion.div>
+        </div>
+      )}
+
+      {/* 3. Original Timeline Content */}
+      <header className="timeline-header">
         <div className="cycle-pill">
-          <Clock size={14} />
+          <Calendar size={14} />
           Current Electoral Cycle
         </div>
-        <h1 className="timeline-title">Your Election Timeline</h1>
+        <h1 className="timeline-title">Election Intelligence Timeline</h1>
         <p className="timeline-subtitle">
-          A comprehensive, real-time guide to the critical milestones of the electoral process.<br />
-          Track deadlines, voting days, and transitions.
+          Real-time analytical tracking of major milestones for the {selectedCountry} elections.
         </p>
-      </div>
+      </header>
 
       <div className="timeline-list">
-        {timeline && timeline.length > 0 ? (
-          timeline.map((item, index) => (
-            <TimelineItem
-              key={index}
-              item={{
-                date: item.date,
-                event: item.title,
-                description: item.description,
-                status: item.status?.toUpperCase(),
-                image: '/assets/images/registration.png' // Default placeholder
-              }}
-              index={index}
-            />
-          ))
-        ) : (
-          <div className="no-data">No timeline data available for this country.</div>
-        )}
-      </div>
-
-      <div className="timeline-footer-cards">
-        <div className="checklist-card">
-          <div className="card-content">
-            <h3>Election Day Checklist</h3>
-            <p>Ensure a smooth voting experience by completing these essential preparatory steps before heading to the polls.</p>
-            <div className="checklist-grid">
-              <div className="check-item"><MapPin size={16} /> Verify Polling Address</div>
-              <div className="check-item"><IdCard size={16} /> Valid Photo ID Ready</div>
-              <div className="check-item"><FileText size={16} /> Review Sample Ballot</div>
-              <div className="check-item"><Clock size={16} /> Plan Your Travel Time</div>
+        {events.map((item, index) => (
+          <motion.div 
+            key={item.id}
+            className="timeline-item"
+            initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <div className="item-content-wrapper">
+              <div className="item-text">
+                <div className={`status-pill ${item.status}`}>
+                  <span className="dot"></span>
+                  {item.status}
+                </div>
+                <h3 className="event-title">{item.title}</h3>
+                <p className="event-description">{item.description}</p>
+                <span className="date-badge">{item.date}</span>
+              </div>
             </div>
-          </div>
-          <div className="card-decoration">
-            <div className="icon-circle">
-              <CheckCircle2 size={32} />
+            
+            <div className="item-image-wrapper">
+              <div className="image-card">
+                <img src={item.image} alt={item.title} />
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="help-card">
-          <div className="help-icon">
-            <Headset size={24} />
-          </div>
-          <h3>Need Direct Help?</h3>
-          <p>Our dedicated Voter Support Team is available 24/7 to answer questions about eligibility and polling.</p>
-          <button className="hotline-btn">
-            <Phone size={16} />
-            Contact Voter Hotline
-          </button>
-          <span className="disclaimer">STANDARD RATES MAY APPLY</span>
-        </div>
+          </motion.div>
+        ))}
       </div>
-
-      <footer className="footer-credits">
-        © 2026 Federal Election Commission - Institutional Access Hub
-      </footer>
     </div>
   );
 };

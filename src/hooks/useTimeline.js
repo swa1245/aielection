@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 export const useTimeline = (country) => {
-  const [timeline, setTimeline] = useState([]);
+  const [data, setData] = useState({ events: [], stats: null });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -14,15 +14,23 @@ export const useTimeline = (country) => {
       setError(null);
       try {
         const res = await api.getTimeline(country);
-        setTimeline(res.data || []);
+        setData(res.data || { events: [], stats: null });
       } catch (err) {
         setError(err.message || 'Failed to fetch timeline');
-        // Fallback mock data for visual testing if API fails
-        setTimeline([
-          { date: 'Jan 1, 2024', event: 'Primary Elections Begin' },
-          { date: 'Jul 15, 2024', event: 'National Convention' },
-          { date: 'Nov 5, 2024', event: 'General Election Day' }
-        ]);
+        // Fallback mock data for dashboard testing
+        setData({
+          events: [
+            { id: '1', date: 'Jan 1, 2024', title: 'Primary Elections', description: 'Initial voting starts.', status: 'completed' },
+            { id: '2', date: 'Nov 5, 2024', title: 'General Election', description: 'The main event.', status: 'upcoming' }
+          ],
+          stats: {
+            daysUntilPolling: '188 Days',
+            projectedTurnout: '72.1%',
+            activeVoters: '168M',
+            healthScore: 88,
+            cycleInsight: 'High early voter engagement recorded across major districts.'
+          }
+        });
       } finally {
         setIsLoading(false);
       }
@@ -31,5 +39,5 @@ export const useTimeline = (country) => {
     fetchTimeline();
   }, [country]);
 
-  return { timeline, isLoading, error, setError };
+  return { events: data.events, stats: data.stats, isLoading, error, setError };
 };
